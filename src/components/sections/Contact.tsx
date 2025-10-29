@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -20,6 +21,7 @@ type ContactFormData = z.infer<typeof contactSchema>
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const sectionRef = useRef<HTMLElement>(null)
 
   const {
     register,
@@ -55,11 +57,61 @@ export function Contact() {
     }
   }
 
+  useEffect(() => {
+    if (!sectionRef.current) return
+
+    const header = sectionRef.current.querySelector('.contact-header')
+    const columns = sectionRef.current.querySelectorAll('.contact-col')
+    const formEls = sectionRef.current.querySelectorAll(
+      '.contact-form input, .contact-form textarea, .contact-form button'
+    )
+
+    // Header fade-in
+    if (header) {
+      gsap.from(header, {
+        opacity: 0,
+        y: 24,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 85%',
+        },
+      })
+    }
+
+    // Columns
+    gsap.from(columns, {
+      opacity: 0,
+      y: 32,
+      duration: 0.6,
+      ease: 'power2.out',
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 80%',
+      },
+    })
+
+    // Form elements slight stagger
+    gsap.from(formEls, {
+      opacity: 0,
+      y: 16,
+      duration: 0.4,
+      ease: 'power2.out',
+      stagger: 0.08,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 75%',
+      },
+    })
+  }, [])
+
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="contact" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 contact-header">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Have a project in mind? Let's work together to bring your ideas to life.
@@ -68,7 +120,7 @@ export function Contact() {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Contact Info */}
-          <Card glass>
+          <Card glass className="contact-col">
             <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
             <div className="space-y-4">
               <div>
@@ -91,8 +143,8 @@ export function Contact() {
           </Card>
 
           {/* Contact Form */}
-          <Card glass>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <Card glass className="contact-col">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 contact-form">
               {/* Honeypot field */}
               <input
                 type="text"

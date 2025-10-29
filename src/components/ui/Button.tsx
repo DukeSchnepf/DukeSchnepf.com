@@ -1,5 +1,6 @@
-import { ButtonHTMLAttributes, forwardRef, ReactNode } from 'react'
+import { ButtonHTMLAttributes, forwardRef, ReactNode, useRef } from 'react'
 import { cn } from '@/utils/helpers'
+import gsap from 'gsap'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost'
@@ -13,6 +14,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     { variant = 'primary', size = 'md', isLoading, className, children, ...props },
     ref
   ) => {
+    const btnRef = useRef<HTMLButtonElement | null>(null)
     const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
     const variants = {
@@ -29,9 +31,37 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-6 py-3 text-lg rounded-xl',
     }
 
+    const handleMouseEnter = () => {
+      if (!btnRef.current) return
+      gsap.to(btnRef.current, { y: -2, scale: 1.02, duration: 0.15, ease: 'power2.out' })
+    }
+
+    const handleMouseLeave = () => {
+      if (!btnRef.current) return
+      gsap.to(btnRef.current, { y: 0, scale: 1, duration: 0.2, ease: 'power2.out' })
+    }
+
+    const handleMouseDown = () => {
+      if (!btnRef.current) return
+      gsap.to(btnRef.current, { y: 0, scale: 0.98, duration: 0.1, ease: 'power2.out' })
+    }
+
+    const handleMouseUp = () => {
+      if (!btnRef.current) return
+      gsap.to(btnRef.current, { y: -2, scale: 1.02, duration: 0.1, ease: 'power2.out' })
+    }
+
     return (
       <button
-        ref={ref}
+        ref={(node) => {
+          if (typeof ref === 'function') ref(node as HTMLButtonElement)
+          else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node
+          btnRef.current = node
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={isLoading || props.disabled}
         {...props}

@@ -38,6 +38,18 @@ export function Hero() {
         },
         '-=0.4'
       )
+
+    // Subtle floating for CTAs
+    if (ctaRef.current?.children) {
+      gsap.to(ctaRef.current.children, {
+        y: 4,
+        repeat: -1,
+        yoyo: true,
+        duration: 1.6,
+        ease: 'sine.inOut',
+        stagger: 0.15,
+      })
+    }
   }, [])
 
   return (
