@@ -1,9 +1,22 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export function Background() {
   const meshRef = useRef<THREE.Mesh>(null!)
+
+  // Generate particle positions once to avoid re-randomizing every render
+  const particlePositions = useMemo<[
+    number,
+    number,
+    number
+  ][]>(() =>
+    Array.from({ length: 20 }, () => [
+      (Math.random() - 0.5) * 10,
+      (Math.random() - 0.5) * 10,
+      (Math.random() - 0.5) * 10,
+    ]),
+  [])
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -26,15 +39,8 @@ export function Background() {
       </mesh>
 
       {/* Additional particles/spheres */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <Particle
-          key={i}
-          position={[
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10,
-          ]}
-        />
+      {particlePositions.map((position, i) => (
+        <Particle key={i} position={position} />
       ))}
     </>
   )
