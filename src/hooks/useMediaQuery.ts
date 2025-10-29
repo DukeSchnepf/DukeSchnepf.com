@@ -25,10 +25,8 @@ export function useMediaQuery(query: string): boolean {
       return () => mediaQueryList.removeEventListener('change', handleChange)
     } else {
       // Safari < 14 fallback
-      // @ts-expect-error older Safari API
       mediaQueryList.addListener(handleChange)
       return () => {
-        // @ts-expect-error older Safari API
         mediaQueryList.removeListener(handleChange)
       }
     }
