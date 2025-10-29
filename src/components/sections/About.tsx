@@ -2,40 +2,15 @@ import { useEffect, useRef } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { siteConfig } from '@/config/site.config'
+import { profile } from '@/config/profile.config'
+import { skills as skillsConfig } from '@/config/skills.config'
+import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
 
-const skills = [
-  'React',
-  'TypeScript',
-  'Node.js',
-  'Next.js',
-  'Three.js',
-  'Tailwind CSS',
-  'PostgreSQL',
-  'MongoDB',
-]
+const previewSkills = skillsConfig.technical.slice(0, 8)
 
-const timeline = [
-  {
-    year: '2024',
-    title: 'Senior Developer',
-    company: 'Tech Company',
-    description: 'Leading development of modern web applications',
-  },
-  {
-    year: '2022',
-    title: 'Full Stack Developer',
-    company: 'Startup Inc',
-    description: 'Built scalable applications with React and Node.js',
-  },
-  {
-    year: '2020',
-    title: 'Junior Developer',
-    company: 'Digital Agency',
-    description: 'Started my journey in web development',
-  },
-]
+// Keep Home page About concise; full details live on /about
 
 export function About() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -71,61 +46,47 @@ export function About() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div ref={elementRef as unknown as React.RefObject<HTMLDivElement>} className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">About Me</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Learn more about my background, skills, and experience
-          </p>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4">About Duke</h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">{profile.overview}</p>
         </div>
 
         {/* Content Grid */}
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
           {/* Bio */}
           <Card glass>
-            <h3 className="text-2xl font-bold mb-4">Bio</h3>
-            <p className="text-gray-300 mb-4">
-              I'm a passionate full-stack developer with a love for creating beautiful,
-              functional web applications. With years of experience in modern web technologies,
-              I specialize in building scalable solutions that solve real-world problems.
-            </p>
-            <p className="text-gray-300">
-              When I'm not coding, you can find me exploring new technologies, contributing to
-              open-source projects, or sharing knowledge with the developer community.
-            </p>
+            <h3 className="text-2xl font-bold mb-4">Professional Overview</h3>
+            <p className="text-gray-300 mb-4">{profile.overview}</p>
+            <p className="text-gray-300">{profile.philosophy}</p>
           </Card>
 
           {/* Skills */}
           <Card glass>
-            <h3 className="text-2xl font-bold mb-6">Skills & Technologies</h3>
+            <h3 className="text-2xl font-bold mb-6">Key Skills</h3>
             <div className="flex flex-wrap gap-3">
-              {skills.map((skill) => (
+              {previewSkills.map((skill) => (
                 <Badge key={skill} variant="primary">
                   {skill}
                 </Badge>
               ))}
             </div>
+            <div className="mt-6">
+              <Link to="/skills" className="text-primary-400 hover:text-primary-300 underline">
+                View full skills
+              </Link>
+            </div>
           </Card>
         </div>
 
-        {/* Timeline */}
-        <div>
-          <h3 className="text-2xl font-bold mb-8 text-center">Experience</h3>
-          <div className="space-y-8">
-            {timeline.map((item, index) => (
-              <Card key={index} glass hover>
-                <div className="flex flex-col md:flex-row md:items-center gap-4">
-                  <div className="text-primary-500 font-bold text-lg">{item.year}</div>
-                  <div className="flex-1">
-                    <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
-                    <p className="text-gray-400 mb-1">{item.company}</p>
-                    <p className="text-gray-300">{item.description}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+        {/* CTA */}
+        <div className="text-center">
+          <Link
+            to="/experience"
+            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all duration-200"
+          >
+            Explore Experience
+          </Link>
         </div>
 
-        {/* CTA */}
         <div className="text-center mt-12">
           <a
             href={siteConfig.resume}

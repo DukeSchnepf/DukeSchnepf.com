@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useScrollPosition } from '@/hooks/useScrollPosition'
 import { siteConfig } from '@/config/site.config'
@@ -66,6 +67,9 @@ export function Navigation() {
                     {item.name}
                   </button>
                 ))}
+                <Link to="/experience" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Experience</Link>
+                <Link to="/skills" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Skills</Link>
+                <Link to="/resume" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Resume</Link>
                 <Button
                   onClick={() => handleNavClick('#contact')}
                   variant="primary"
@@ -122,6 +126,9 @@ export function Navigation() {
                   {item.name}
                 </button>
               ))}
+              <Link to="/experience" className="block px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Experience</Link>
+              <Link to="/skills" className="block px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Skills</Link>
+              <Link to="/resume" className="block px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Resume</Link>
               <Button
                 onClick={() => handleNavClick('#contact')}
                 variant="primary"

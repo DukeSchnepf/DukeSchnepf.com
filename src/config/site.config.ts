@@ -1,10 +1,10 @@
 export const siteConfig = {
-  name: 'Your Name',
-  title: 'Full Stack Developer',
-  description: 'A modern portfolio showcasing my projects and skills',
+  name: 'Duke Schnepf',
+  title: 'Entrepreneurial Tech Professional & Community Builder',
+  description: 'Professional profile, experience, and projects',
   url: 'https://yourwebsite.com',
-  email: 'your.email@example.com',
-  location: 'Location',
+  email: 'Dukeschnepf@gmail.com',
+  location: 'Sequim/Fall City, Washington',
   available: true,
 
   navigation: [
@@ -16,12 +16,12 @@ export const siteConfig = {
 
   social: {
     github: 'https://github.com/yourusername',
-    linkedin: 'https://linkedin.com/in/yourusername',
+    linkedin: 'https://www.linkedin.com/in/duke-schnepf-48a13b133/',
     twitter: 'https://twitter.com/yourusername',
-    email: 'mailto:your.email@example.com',
+    email: 'mailto:Dukeschnepf@gmail.com',
   },
 
-  resume: '/resume.pdf',
+  resume: '/Duke-Schnepf-Resume.pdf',
 }
 
 export type SiteConfig = typeof siteConfig

@@ -88,7 +88,9 @@ export function Projects() {
                 <div
                   className="w-full h-48 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg mb-4 flex items-center justify-center"
                   style={{
-                    background: `linear-gradient(135deg, ${project.image})`,
+                    backgroundImage: `url(${project.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
                   }}
                 />
                 <h3 className="text-xl font-bold mb-2">{project.title}</h3>
@@ -117,7 +119,9 @@ export function Projects() {
             <div
               className="w-full h-64 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg"
               style={{
-                background: `linear-gradient(135deg, ${selectedProject.image})`,
+                backgroundImage: `url(${selectedProject.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
               }}
             />
             <p className="text-gray-300">{selectedProject.longDescription}</p>

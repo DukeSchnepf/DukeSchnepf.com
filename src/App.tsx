@@ -6,6 +6,10 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 import '@/styles/global.css'
 
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })))
+const AboutPage = lazy(() => import('./pages/About').then((m) => ({ default: m.AboutPage })))
+const ExperiencePage = lazy(() => import('./pages/Experience').then((m) => ({ default: m.ExperiencePage })))
+const SkillsPage = lazy(() => import('./pages/Skills').then((m) => ({ default: m.SkillsPage })))
+const ResumePage = lazy(() => import('./pages/Resume').then((m) => ({ default: m.ResumePage })))
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
 
 function ScrollToTop() {
@@ -32,6 +36,10 @@ function AppContent() {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/experience" element={<ExperiencePage />} />
+            <Route path="/skills" element={<SkillsPage />} />
+            <Route path="/resume" element={<ResumePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

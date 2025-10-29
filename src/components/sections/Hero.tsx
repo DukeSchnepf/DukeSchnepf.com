@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { Button } from '@/components/ui/Button'
 import { Scene } from '@/features/three-scene'
 import { siteConfig } from '@/config/site.config'
+import { Link } from 'react-router-dom'
 import gsap from 'gsap'
-import { smoothScrollTo } from '@/utils/helpers'
 
 export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -61,12 +60,12 @@ export function Hero() {
         </p>
 
         <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button onClick={() => smoothScrollTo('projects')} variant="primary" size="lg">
-            View My Work
-          </Button>
-          <Button onClick={() => smoothScrollTo('contact')} variant="ghost" size="lg">
-            Get In Touch
-          </Button>
+          <Link to="/experience" className="px-6 py-3 rounded-xl bg-primary-500 text-white hover:bg-primary-600 text-lg">
+            Experience
+          </Link>
+          <a href={siteConfig.resume} download className="px-6 py-3 rounded-xl bg-white/10 text-white hover:bg-white/20 text-lg">
+            Download Resume
+          </a>
         </div>
       </div>
 
