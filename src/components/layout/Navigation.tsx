@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useScrollPosition } from '@/hooks/useScrollPosition'
@@ -6,12 +6,14 @@ import { siteConfig } from '@/config/site.config'
 import { smoothScrollTo } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const lastScroll = useScrollPosition()
   const isMobile = useMediaQuery('(max-width: 768px)')
+  const progressRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const currentScroll = window.pageYOffset
@@ -34,6 +36,27 @@ export function Navigation() {
       })
     }
   }, [isMenuOpen])
+
+  useEffect(() => {
+    if (!progressRef.current) return
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        start: 0,
+        end: () => document.documentElement.scrollHeight - window.innerHeight,
+        onUpdate: (self) => {
+          gsap.to(progressRef.current, {
+            width: `${Math.min(100, Math.max(0, self.progress * 100))}%`,
+            duration: 0.2,
+            ease: 'power1.out',
+            overwrite: 'auto',
+          })
+        },
+      })
+    })
+
+    return () => ctx.revert()
+  }, [])
 
   return (
     <nav
@@ -140,6 +163,12 @@ export function Navigation() {
             </div>
           </div>
         )}
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-white/5 overflow-hidden">
+          <div
+            ref={progressRef}
+            className="h-full w-0 bg-gradient-to-r from-primary-500 via-secondary-500 to-primary-500"
+          />
+        </div>
       </div>
     </nav>
   )

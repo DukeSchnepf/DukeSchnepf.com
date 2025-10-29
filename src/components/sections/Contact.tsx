@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -20,6 +22,7 @@ type ContactFormData = z.infer<typeof contactSchema>
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const sectionRef = useRef<HTMLElement>(null)
 
   const {
     register,
@@ -29,6 +32,41 @@ export function Contact() {
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   })
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.contact-header', {
+        opacity: 0,
+        y: 28,
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.contact-header',
+          start: 'top 85%',
+        },
+      })
+
+      ScrollTrigger.batch('.contact-reveal', {
+        start: 'top 85%',
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.15,
+          }),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: 20,
+            overwrite: true,
+          }),
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   const onSubmit = async (data: ContactFormData) => {
     if (data.honeypot) {
@@ -56,44 +94,49 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Have a project in mind? Let's work together to bring your ideas to life.
+    <section id="contact" ref={sectionRef} className="relative py-24 px-4 sm:px-6 lg:px-8">
+      <div className="absolute inset-x-0 bottom-0 -z-10 mx-auto h-[520px] max-w-5xl rounded-[3rem] bg-gradient-to-t from-secondary-500/10 via-white/5 to-transparent blur-3xl" />
+
+      <div className="max-w-4xl mx-auto space-y-12">
+        <div className="contact-header text-center space-y-4">
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-gray-300">
+            Let&apos;s Collaborate
+          </p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white">Get In Touch</h2>
+          <p className="text-gray-300 max-w-2xl mx-auto">
+            Have a project in mind? Drop a note and I&apos;ll share how we can turn bold ideas into
+            shipped outcomes.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Contact Info */}
-          <Card glass>
-            <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-            <div className="space-y-4">
+          <Card className="contact-reveal translate-y-8 opacity-0 border border-white/10 bg-white/5 backdrop-blur">
+            <h3 className="text-2xl font-semibold text-white mb-6">Contact Information</h3>
+            <div className="space-y-5 text-left">
               <div>
-                <h4 className="font-semibold mb-2">Email</h4>
-                <a href={siteConfig.social.email} className="text-primary-500 hover:text-primary-400">
+                <p className="text-xs uppercase tracking-[0.3em] text-secondary-200 mb-2">Email</p>
+                <a
+                  href={siteConfig.social.email}
+                  className="text-lg font-semibold text-white hover:text-primary-200 transition"
+                >
                   {siteConfig.email}
                 </a>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Location</h4>
+                <p className="text-xs uppercase tracking-[0.3em] text-secondary-200 mb-2">Location</p>
                 <p className="text-gray-300">{siteConfig.location}</p>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Availability</h4>
+                <p className="text-xs uppercase tracking-[0.3em] text-secondary-200 mb-2">Availability</p>
                 <p className="text-gray-300">
-                  {siteConfig.available ? 'Available for work' : 'Not currently available'}
+                  {siteConfig.available ? 'Currently open to new collaborations' : 'Currently booked, reach out for future slots'}
                 </p>
               </div>
             </div>
           </Card>
 
-          {/* Contact Form */}
-          <Card glass>
+          <Card className="contact-reveal translate-y-8 opacity-0 border border-white/10 bg-white/5 backdrop-blur">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Honeypot field */}
               <input
                 type="text"
                 {...register('honeypot')}
@@ -116,9 +159,9 @@ export function Contact() {
                 <textarea
                   id="message"
                   {...register('message')}
-                  rows={5}
-                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
-                  placeholder="Your message..."
+                  rows={6}
+                  className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-400 outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30"
+                  placeholder="Tell me about your project, timeline, or team..."
                 />
                 {errors.message && (
                   <p className="mt-1 text-sm text-red-500">{errors.message.message}</p>
@@ -136,13 +179,13 @@ export function Contact() {
               </Button>
 
               {submitStatus === 'success' && (
-                <p className="text-green-500 text-center">
-                  Message sent successfully! I'll get back to you soon.
+                <p className="rounded-lg border border-green-500/40 bg-green-500/10 px-4 py-3 text-center text-sm text-green-300">
+                  Message received! I&apos;ll get back to you shortly.
                 </p>
               )}
               {submitStatus === 'error' && (
-                <p className="text-red-500 text-center">
-                  Failed to send message. Please try again or contact me via email.
+                <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-center text-sm text-red-300">
+                  There was a hiccup sending your note. Please retry or email me directly.
                 </p>
               )}
             </form>

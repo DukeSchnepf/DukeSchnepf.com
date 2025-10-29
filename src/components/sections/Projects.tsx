@@ -1,15 +1,17 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
 import { projects, type Project, type ProjectCategory } from '@/config/projects.config'
-import gsap from 'gsap'
 
 export function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [filter, setFilter] = useState<ProjectCategory>('all')
   const [filteredProjects, setFilteredProjects] = useState(projects)
   const sectionRef = useRef<HTMLElement>(null)
+  const filterRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (filter === 'all') {
@@ -19,70 +21,137 @@ export function Projects() {
     }
   }, [filter])
 
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.projects-header', {
+        y: 32,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.projects-header',
+          start: 'top 85%',
+        },
+      })
+
+      ScrollTrigger.batch('.project-card', {
+        start: 'top 85%',
+        invalidateOnRefresh: true,
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.12,
+          }),
+        onLeaveBack: (batch) =>
+          gsap.set(batch, {
+            opacity: 0,
+            y: 56,
+            scale: 0.96,
+          }),
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   useEffect(() => {
-    if (sectionRef.current) {
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>('.project-card')
+      if (cards.length === 0) return
+
       gsap.fromTo(
-        sectionRef.current.querySelectorAll('.project-card'),
+        cards,
         {
           opacity: 0,
-          y: 50,
-          scale: 0.95,
+          y: 40,
+          scale: 0.96,
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
           duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          },
+          ease: 'power3.out',
+          stagger: 0.08,
+          overwrite: 'auto',
         }
       )
-    }
+    }, sectionRef)
+
+    return () => ctx.revert()
   }, [filteredProjects])
+
+  useEffect(() => {
+    if (!filterRef.current) return
+
+    const activeButton = filterRef.current.querySelector<HTMLButtonElement>(
+      `[data-filter="${filter}"]`
+    )
+    const indicator = filterRef.current.querySelector<HTMLSpanElement>('.filter-indicator')
+
+    if (!activeButton || !indicator) return
+
+    const { offsetLeft, offsetWidth, offsetTop, offsetHeight } = activeButton
+    gsap.to(indicator, {
+      x: offsetLeft,
+      y: offsetTop,
+      width: offsetWidth,
+      height: offsetHeight,
+      duration: 0.4,
+      ease: 'power3.out',
+    })
+  }, [filter])
 
   const categories: ProjectCategory[] = ['all', 'web', 'mobile', 'desktop', 'other']
 
   return (
     <>
-      <section id="projects" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">My Projects</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              A selection of projects I've worked on
+      <section id="projects" ref={sectionRef} className="relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 -z-10">
+          <div className="mx-auto h-full max-w-6xl rounded-[3rem] bg-gradient-to-t from-primary-500/10 via-white/5 to-transparent blur-3xl" />
+        </div>
+
+        <div className="max-w-6xl mx-auto">
+          <div className="projects-header text-center space-y-4 mb-16">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-gray-300">
+              Selected Work
+            </p>
+            <h2 className="text-4xl sm:text-5xl font-bold text-white">Projects & Live Operations</h2>
+            <p className="text-gray-300 max-w-2xl mx-auto">
+              Hands-on ownership of launches, campaigns, and product iterations that blend product
+              strategy with community-driven creativity.
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <div ref={filterRef} className="relative mb-12 flex flex-wrap justify-center gap-3">
+            <span className="filter-indicator pointer-events-none absolute inset-y-0 left-0 w-0 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 opacity-25" />
             {categories.map((category) => (
               <button
                 key={category}
+                data-filter={category}
                 onClick={() => setFilter(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 capitalize ${
+                className={`relative z-10 px-5 py-2.5 rounded-full text-sm font-medium capitalize transition-colors duration-200 ${
                   filter === category
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-white/5 text-gray-400 hover:text-white'
+                    ? 'text-white drop-shadow-[0_0_12px_rgba(14,165,233,0.35)]'
+                    : 'text-gray-300 hover:text-white'
                 }`}
               >
-                {category === 'all' ? 'All' : category}
+                {category === 'all' ? 'All Projects' : category}
               </button>
             ))}
           </div>
 
-          {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProjects.map((project) => (
               <Card
                 key={project.id}
                 glass
                 hover
-                className="project-card cursor-pointer"
+                className="project-card cursor-pointer translate-y-10 scale-[0.97] opacity-0 border-white/10 bg-white/5 backdrop-blur"
                 onClick={() => setSelectedProject(project)}
               >
                 <div
