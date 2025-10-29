@@ -13,14 +13,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     { variant = 'primary', size = 'md', isLoading, className, children, ...props },
     ref
   ) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform'
 
     const variants = {
-      primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700',
+      primary:
+        'bg-primary-500 text-white shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-primary-600 active:bg-primary-700 focus-visible:ring-2 focus-visible:ring-primary-400/40',
       secondary:
-        'bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700',
+        'bg-secondary-500 text-white shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-secondary-600 active:bg-secondary-700 focus-visible:ring-2 focus-visible:ring-secondary-400/40',
       ghost:
-        'bg-transparent text-primary-500 hover:bg-primary-50 active:bg-primary-100',
+        'bg-transparent text-primary-400 hover:text-white hover:bg-white/10 active:bg-white/20 focus-visible:ring-2 focus-visible:ring-primary-400/30',
     }
 
     const sizes = {

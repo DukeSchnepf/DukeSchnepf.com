@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,6 +7,10 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { siteConfig } from '@/config/site.config'
 import { sendEmail } from '@/services/api/emailService'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -20,6 +24,9 @@ type ContactFormData = z.infer<typeof contactSchema>
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const sectionRef = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   const {
     register,
@@ -55,11 +62,60 @@ export function Contact() {
     }
   }
 
+  useEffect(() => {
+    if (!sectionRef.current) return
+
+    // Animate header in
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }
+
+    // Animate form fields in
+    if (formRef.current) {
+      const inputs = formRef.current.querySelectorAll('label, input, textarea, button, p.text-*')
+      gsap.fromTo(
+        inputs,
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out',
+          stagger: 0.06,
+          scrollTrigger: {
+            trigger: formRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }
+  }, [])
+
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="py-20 px-4 sm:px-6 lg:px-8"
+    >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div ref={headerRef} className="text-center mb-12">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Have a project in mind? Let's work together to bring your ideas to life.
@@ -92,7 +148,7 @@ export function Contact() {
 
           {/* Contact Form */}
           <Card glass>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Honeypot field */}
               <input
                 type="text"

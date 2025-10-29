@@ -3,11 +3,16 @@ import { Scene } from '@/features/three-scene'
 import { siteConfig } from '@/config/site.config'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null)
+  const indicatorRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const tl = gsap.timeline()
@@ -40,10 +45,42 @@ export function Hero() {
       )
   }, [])
 
+  useEffect(() => {
+    // Background subtle parallax and fade on scroll
+    if (bgRef.current) {
+      gsap.fromTo(
+        bgRef.current,
+        { y: 0, opacity: 0.35 },
+        {
+          y: 60,
+          opacity: 0.2,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: document.body,
+            start: 'top top',
+            end: '+=60%',
+            scrub: true,
+          },
+        }
+      )
+    }
+
+    // Scroll indicator pulsing motion
+    if (indicatorRef.current) {
+      gsap.to(indicatorRef.current, {
+        y: 8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        duration: 1.2,
+      })
+    }
+  }, [])
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Three.js Background */}
-      <div className="absolute inset-0 opacity-30">
+      <div ref={bgRef} className="absolute inset-0 opacity-30 will-change-transform">
         <Scene />
       </div>
 
@@ -70,7 +107,7 @@ export function Hero() {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
+      <div ref={indicatorRef} className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
         <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>

@@ -10,6 +10,8 @@ export const gsapConfig = {
   },
 
   init() {
+    // Apply global gsap defaults
+    gsap.defaults(this.defaults)
     // Set default ScrollTrigger settings
     ScrollTrigger.config({
       autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
