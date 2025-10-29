@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/Badge'
  
 import { profile } from '@/config/profile.config'
 import { skills as skillsConfig } from '@/config/skills.config'
-import { Link } from 'react-router-dom'
+import { smoothScrollTo } from '@/utils/helpers'
 import gsap from 'gsap'
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
 
@@ -70,30 +70,33 @@ export function About() {
               ))}
             </div>
             <div className="mt-6">
-              <Link to="/skills" className="text-primary-400 hover:text-primary-300 underline">
-                View full skills
-              </Link>
+              <button
+                onClick={() => smoothScrollTo('projects')}
+                className="text-primary-400 hover:text-primary-300 underline"
+              >
+                View projects
+              </button>
             </div>
           </Card>
         </div>
 
         {/* CTA */}
         <div className="text-center">
-          <Link
-            to="/experience"
+          <button
+            onClick={() => smoothScrollTo('projects')}
             className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all duration-200"
           >
-            Explore Experience
-          </Link>
+            Explore Projects
+          </button>
         </div>
 
         <div className="text-center mt-12">
-          <Link
-            to="/resume"
+          <button
+            onClick={() => smoothScrollTo('contact')}
             className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700 transition-all duration-200"
           >
-            View Resume
-          </Link>
+            Get in Touch
+          </button>
         </div>
       </div>
     </section>
