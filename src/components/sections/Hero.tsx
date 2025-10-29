@@ -1,0 +1,82 @@
+import { useEffect, useRef } from 'react'
+import { Button } from '@/components/ui/Button'
+import { Scene } from '@/features/three-scene'
+import { siteConfig } from '@/config/site.config'
+import gsap from 'gsap'
+import { smoothScrollTo } from '@/utils/helpers'
+
+export function Hero() {
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const subtitleRef = useRef<HTMLParagraphElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const tl = gsap.timeline()
+    tl.from(titleRef.current, {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      ease: 'power2.out',
+    })
+      .from(
+        subtitleRef.current,
+        {
+          opacity: 0,
+          y: 30,
+          duration: 0.6,
+          ease: 'power2.out',
+        },
+        '-=0.4'
+      )
+      .from(
+        ctaRef.current?.children!,
+        {
+          opacity: 0,
+          y: 20,
+          duration: 0.4,
+          stagger: 0.1,
+          ease: 'power2.out',
+        },
+        '-=0.4'
+      )
+  }, [])
+
+  return (
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Three.js Background */}
+      <div className="absolute inset-0 opacity-30">
+        <Scene />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <h1
+          ref={titleRef}
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent"
+        >
+          {siteConfig.name}
+        </h1>
+        <p ref={subtitleRef} className="text-xl sm:text-2xl text-gray-400 mb-8">
+          {siteConfig.title}
+        </p>
+
+        <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Button onClick={() => smoothScrollTo('projects')} variant="primary" size="lg">
+            View My Work
+          </Button>
+          <Button onClick={() => smoothScrollTo('contact')} variant="ghost" size="lg">
+            Get In Touch
+          </Button>
+        </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
+        <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
+      </div>
+    </section>
+  )
+}
+
