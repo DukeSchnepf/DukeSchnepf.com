@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useScrollPosition } from '@/hooks/useScrollPosition'
@@ -12,6 +12,7 @@ export function Navigation() {
   const [isVisible, setIsVisible] = useState(true)
   const lastScroll = useScrollPosition()
   const isMobile = useMediaQuery('(max-width: 768px)')
+  const navRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const currentScroll = window.pageYOffset
@@ -35,6 +36,48 @@ export function Navigation() {
     }
   }, [isMenuOpen])
 
+  useEffect(() => {
+    if (!navRef.current || isMobile) return
+
+    const navItems = navRef.current.querySelectorAll('.nav-item')
+    
+    navItems.forEach((item) => {
+      const underline = document.createElement('div')
+      underline.className = 'nav-underline'
+      underline.style.cssText = `
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0%;
+        height: 2px;
+        background: linear-gradient(to right, rgb(99, 102, 241), rgb(139, 92, 246));
+        transition: width 0.3s ease;
+      `
+      
+      const parent = item.parentElement
+      if (parent) {
+        parent.style.position = 'relative'
+        parent.appendChild(underline)
+      }
+
+      item.addEventListener('mouseenter', () => {
+        gsap.to(underline, {
+          width: '100%',
+          duration: 0.3,
+          ease: 'power2.out',
+        })
+      })
+
+      item.addEventListener('mouseleave', () => {
+        gsap.to(underline, {
+          width: '0%',
+          duration: 0.3,
+          ease: 'power2.out',
+        })
+      })
+    })
+  }, [isMobile])
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
@@ -57,19 +100,19 @@ export function Navigation() {
 
             {/* Desktop Navigation */}
             {!isMobile && (
-              <div className="hidden md:flex md:items-center md:space-x-4">
+              <div ref={navRef} className="hidden md:flex md:items-center md:space-x-4">
                 {siteConfig.navigation.map((item) => (
                   <button
                     key={item.name}
                     onClick={() => handleNavClick(item.href)}
-                    className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                    className="nav-item px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
                   >
                     {item.name}
                   </button>
                 ))}
-                <Link to="/experience" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Experience</Link>
-                <Link to="/skills" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Skills</Link>
-                <Link to="/resume" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Resume</Link>
+                <Link to="/experience" className="nav-item px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Experience</Link>
+                <Link to="/skills" className="nav-item px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Skills</Link>
+                <Link to="/resume" className="nav-item px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Resume</Link>
                 <Button
                   onClick={() => handleNavClick('#contact')}
                   variant="primary"

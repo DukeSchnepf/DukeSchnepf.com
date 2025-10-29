@@ -21,26 +21,62 @@ export function Projects() {
 
   useEffect(() => {
     if (sectionRef.current) {
+      const cards = sectionRef.current.querySelectorAll('.project-card')
+      
+      // Clear previous animations
+      gsap.killTweensOf(cards)
+      
+      // Animate cards with more sophisticated effects
       gsap.fromTo(
-        sectionRef.current.querySelectorAll('.project-card'),
+        cards,
         {
           opacity: 0,
-          y: 50,
-          scale: 0.95,
+          y: 80,
+          scale: 0.9,
+          rotationY: 15,
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
+          rotationY: 0,
+          duration: 0.8,
+          stagger: {
+            each: 0.15,
+            from: 'start',
+            ease: 'power2.out',
+          },
+          ease: 'back.out(1.2)',
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 80%',
+            start: 'top 75%',
+            toggleActions: 'play none none reverse',
           },
         }
       )
+
+      // Add hover effects to each card
+      cards.forEach((card) => {
+        const cardElement = card as HTMLElement
+        
+        cardElement.addEventListener('mouseenter', () => {
+          gsap.to(cardElement, {
+            y: -10,
+            scale: 1.05,
+            duration: 0.4,
+            ease: 'power2.out',
+          })
+        })
+
+        cardElement.addEventListener('mouseleave', () => {
+          gsap.to(cardElement, {
+            y: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: 'power2.out',
+          })
+        })
+      })
     }
   }, [filteredProjects])
 
@@ -52,9 +88,11 @@ export function Projects() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">My Projects</h2>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 bg-clip-text text-transparent">
+              My Projects
+            </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              A selection of projects I've worked on
+              A selection of projects I've worked on, showcasing my skills and expertise
             </p>
           </div>
 

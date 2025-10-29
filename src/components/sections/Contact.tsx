@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,6 +7,10 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { siteConfig } from '@/config/site.config'
 import { sendEmail } from '@/services/api/emailService'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -20,6 +24,10 @@ type ContactFormData = z.infer<typeof contactSchema>
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const sectionRef = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const leftCardRef = useRef<HTMLDivElement>(null)
+  const rightCardRef = useRef<HTMLDivElement>(null)
 
   const {
     register,
@@ -29,6 +37,68 @@ export function Contact() {
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   })
+
+  useEffect(() => {
+    if (!sectionRef.current) return
+
+    // Animate header
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current.children,
+        {
+          opacity: 0,
+          y: 40,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }
+
+    // Animate cards
+    if (leftCardRef.current && rightCardRef.current) {
+      gsap.fromTo(
+        leftCardRef.current,
+        { x: -80, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: leftCardRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+
+      gsap.fromTo(
+        rightCardRef.current,
+        { x: 80, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: rightCardRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }
+  }, [])
 
   const onSubmit = async (data: ContactFormData) => {
     if (data.honeypot) {
@@ -56,11 +126,13 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h2>
+        <div ref={headerRef} className="text-center mb-12">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 bg-clip-text text-transparent">
+            Get In Touch
+          </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Have a project in mind? Let's work together to bring your ideas to life.
           </p>
@@ -68,8 +140,10 @@ export function Contact() {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Contact Info */}
-          <Card glass>
-            <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+          <Card ref={leftCardRef} glass hover animatedBorder>
+            <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
+              Contact Information
+            </h3>
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Email</h4>
@@ -91,7 +165,7 @@ export function Contact() {
           </Card>
 
           {/* Contact Form */}
-          <Card glass>
+          <Card ref={rightCardRef} glass hover animatedBorder>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Honeypot field */}
               <input
