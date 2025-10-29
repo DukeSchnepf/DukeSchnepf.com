@@ -63,9 +63,9 @@ export function Hero() {
           <Link to="/experience" className="px-6 py-3 rounded-xl bg-primary-500 text-white hover:bg-primary-600 text-lg">
             Experience
           </Link>
-          <a href={siteConfig.resume} download className="px-6 py-3 rounded-xl bg-white/10 text-white hover:bg-white/20 text-lg">
-            Download Resume
-          </a>
+          <Link to="/resume" className="px-6 py-3 rounded-xl bg-white/10 text-white hover:bg-white/20 text-lg">
+            View Resume
+          </Link>
         </div>
       </div>
 

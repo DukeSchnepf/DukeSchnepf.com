@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { siteConfig } from '@/config/site.config'
+ 
 import { profile } from '@/config/profile.config'
 import { skills as skillsConfig } from '@/config/skills.config'
 import { Link } from 'react-router-dom'
@@ -88,13 +88,12 @@ export function About() {
         </div>
 
         <div className="text-center mt-12">
-          <a
-            href={siteConfig.resume}
-            download
+          <Link
+            to="/resume"
             className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700 transition-all duration-200"
           >
-            Download Resume
-          </a>
+            View Resume
+          </Link>
         </div>
       </div>
     </section>

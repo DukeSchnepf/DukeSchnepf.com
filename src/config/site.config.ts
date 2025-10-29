@@ -21,7 +21,7 @@ export const siteConfig = {
     email: 'mailto:Dukeschnepf@gmail.com',
   },
 
-  resume: '/Duke-Schnepf-Resume.pdf',
+  resume: '/resume',
 }
 
 export type SiteConfig = typeof siteConfig

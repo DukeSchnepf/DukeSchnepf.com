@@ -6,7 +6,7 @@ export const profile = {
   email: 'Dukeschnepf@gmail.com',
   linkedin: 'https://www.linkedin.com/in/duke-schnepf-48a13b133/',
   headshot: '/duke-headshot.jpg',
-  resumeUrl: '/Duke-Schnepf-Resume.pdf',
+  resumeUrl: '/resume',
   philosophy:
     'If opportunity doesn\'t knock, build a door. Passionate about innovation, problem solving, and community building.',
   overview:
