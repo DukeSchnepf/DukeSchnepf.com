@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,6 +7,10 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { siteConfig } from '@/config/site.config'
 import { sendEmail } from '@/services/api/emailService'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -20,6 +24,8 @@ type ContactFormData = z.infer<typeof contactSchema>
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const sectionRef = useRef<HTMLElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   const {
     register,
@@ -55,11 +61,59 @@ export function Contact() {
     }
   }
 
+  useEffect(() => {
+    if (!sectionRef.current) return
+
+    const ctx = gsap.context(() => {
+      gsap.from(sectionRef.current!.querySelector('.contact-header'), {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 85%',
+        },
+      })
+
+      gsap.from(sectionRef.current!.querySelector('.contact-info'), {
+        opacity: 0,
+        x: -20,
+        duration: 0.6,
+        delay: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+        },
+      })
+
+      if (formRef.current) {
+        const fields = formRef.current.querySelectorAll('input, textarea, button')
+        gsap.from(fields, {
+          opacity: 0,
+          y: 10,
+          duration: 0.4,
+          stagger: 0.08,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: formRef.current,
+            start: 'top 85%',
+          },
+        })
+      }
+    }, sectionRef)
+
+    return () => {
+      ctx.revert()
+    }
+  }, [])
+
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="contact" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 contact-header">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Have a project in mind? Let's work together to bring your ideas to life.
@@ -68,7 +122,7 @@ export function Contact() {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Contact Info */}
-          <Card glass>
+          <Card glass className="contact-info">
             <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
             <div className="space-y-4">
               <div>
@@ -92,7 +146,7 @@ export function Contact() {
 
           {/* Contact Form */}
           <Card glass>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-4 contact-form">
               {/* Honeypot field */}
               <input
                 type="text"

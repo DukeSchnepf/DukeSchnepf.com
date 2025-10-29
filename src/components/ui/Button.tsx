@@ -1,5 +1,6 @@
-import { ButtonHTMLAttributes, forwardRef, ReactNode } from 'react'
+import { ButtonHTMLAttributes, forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { cn } from '@/utils/helpers'
+import gsap from 'gsap'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost'
@@ -13,6 +14,52 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     { variant = 'primary', size = 'md', isLoading, className, children, ...props },
     ref
   ) => {
+    const localRef = useRef<HTMLButtonElement | null>(null)
+    // Merge refs
+    const setRefs = (node: HTMLButtonElement) => {
+      localRef.current = node
+      if (typeof ref === 'function') ref(node)
+      else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node
+    }
+
+    useEffect(() => {
+      if (!localRef.current) return
+      const el = localRef.current
+      const toScale = gsap.quickTo(el, 'scale', { duration: 0.15, ease: 'power2.out' })
+      const toY = gsap.quickTo(el, 'y', { duration: 0.15, ease: 'power2.out' })
+      const toShadow = gsap.quickTo(el, 'boxShadow', { duration: 0.2, ease: 'power2.out' })
+
+      const onEnter = () => {
+        toScale(1.03)
+        toY(-1)
+        toShadow('0 8px 20px rgba(0,0,0,0.2)')
+      }
+      const onLeave = () => {
+        toScale(1)
+        toY(0)
+        toShadow('none')
+      }
+      const onDown = () => {
+        toScale(0.98)
+        toY(0)
+      }
+      const onUp = () => {
+        toScale(1.03)
+        toY(-1)
+      }
+
+      el.addEventListener('pointerenter', onEnter)
+      el.addEventListener('pointerleave', onLeave)
+      el.addEventListener('pointerdown', onDown)
+      el.addEventListener('pointerup', onUp)
+
+      return () => {
+        el.removeEventListener('pointerenter', onEnter)
+        el.removeEventListener('pointerleave', onLeave)
+        el.removeEventListener('pointerdown', onDown)
+        el.removeEventListener('pointerup', onUp)
+      }
+    }, [])
     const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
     const variants = {
@@ -31,7 +78,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        ref={ref}
+        ref={setRefs}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={isLoading || props.disabled}
         {...props}
