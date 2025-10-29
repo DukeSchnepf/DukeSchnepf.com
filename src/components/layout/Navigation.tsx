@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useScrollPosition } from '@/hooks/useScrollPosition'
@@ -12,6 +12,8 @@ export function Navigation() {
   const [isVisible, setIsVisible] = useState(true)
   const lastScroll = useScrollPosition()
   const isMobile = useMediaQuery('(max-width: 768px)')
+  const underlineRef = useRef<HTMLSpanElement>(null)
+  const linksContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const currentScroll = window.pageYOffset
@@ -35,6 +37,48 @@ export function Navigation() {
     }
   }, [isMenuOpen])
 
+  // Animated underline for desktop nav
+  useEffect(() => {
+    if (!underlineRef.current || !linksContainerRef.current) return
+    const underline = underlineRef.current
+    gsap.set(underline, { opacity: 0, scaleX: 0 })
+
+    const container = linksContainerRef.current
+    const buttons = Array.from(container.querySelectorAll('button.nav-link, a.nav-link')) as HTMLElement[]
+
+    const moveUnderline = (el: HTMLElement) => {
+      const bounds = el.getBoundingClientRect()
+      const parentBounds = container.getBoundingClientRect()
+      const left = bounds.left - parentBounds.left
+      const width = bounds.width
+      const quickLeft = gsap.quickTo(underline, 'left', { duration: 0.3, ease: 'power2.out' })
+      const quickWidth = gsap.quickTo(underline, 'width', { duration: 0.3, ease: 'power2.out' })
+      quickLeft(left)
+      quickWidth(width)
+      gsap.to(underline, { opacity: 1, scaleX: 1, duration: 0.2, ease: 'power2.out' })
+    }
+
+    const resetUnderline = () => {
+      gsap.to(underline, { opacity: 0, scaleX: 0, duration: 0.2, ease: 'power2.in' })
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('mouseenter', () => moveUnderline(btn))
+      btn.addEventListener('focus', () => moveUnderline(btn))
+      btn.addEventListener('mouseleave', resetUnderline)
+      btn.addEventListener('blur', resetUnderline)
+    })
+
+    return () => {
+      buttons.forEach((btn) => {
+        btn.removeEventListener('mouseenter', () => moveUnderline(btn))
+        btn.removeEventListener('focus', () => moveUnderline(btn))
+        btn.removeEventListener('mouseleave', resetUnderline)
+        btn.removeEventListener('blur', resetUnderline)
+      })
+    }
+  }, [])
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
@@ -57,19 +101,25 @@ export function Navigation() {
 
             {/* Desktop Navigation */}
             {!isMobile && (
-              <div className="hidden md:flex md:items-center md:space-x-4">
+              <div ref={linksContainerRef} className="hidden md:flex md:items-center md:space-x-4 relative">
+                {/* Underline */}
+                <span
+                  ref={underlineRef}
+                  className="absolute -bottom-1 h-0.5 bg-primary-500 rounded"
+                  style={{ left: 0, width: 0, transformOrigin: 'left center' }}
+                />
                 {siteConfig.navigation.map((item) => (
                   <button
                     key={item.name}
                     onClick={() => handleNavClick(item.href)}
-                    className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                    className="nav-link px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
                   >
                     {item.name}
                   </button>
                 ))}
-                <Link to="/experience" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Experience</Link>
-                <Link to="/skills" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Skills</Link>
-                <Link to="/resume" className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Resume</Link>
+                <Link to="/experience" className="nav-link px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Experience</Link>
+                <Link to="/skills" className="nav-link px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Skills</Link>
+                <Link to="/resume" className="nav-link px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Resume</Link>
                 <Button
                   onClick={() => handleNavClick('#contact')}
                   variant="primary"

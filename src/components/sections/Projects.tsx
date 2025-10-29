@@ -82,6 +82,7 @@ export function Projects() {
                 key={project.id}
                 glass
                 hover
+                tilt
                 className="project-card cursor-pointer"
                 onClick={() => setSelectedProject(project)}
               >

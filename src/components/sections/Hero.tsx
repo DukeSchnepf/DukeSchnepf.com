@@ -3,11 +3,16 @@ import { Scene } from '@/features/three-scene'
 import { siteConfig } from '@/config/site.config'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const tl = gsap.timeline()
@@ -40,15 +45,48 @@ export function Hero() {
       )
   }, [])
 
+  // Parallax scroll effect for hero content
+  useEffect(() => {
+    if (!contentRef.current || !sectionRef.current) return
+    gsap.to(contentRef.current, {
+      y: -20,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      },
+    })
+  }, [])
+
+  const handleMouseMove: React.MouseEventHandler<HTMLElement> = (e) => {
+    if (!contentRef.current || !sectionRef.current) return
+    const rect = sectionRef.current.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
+    gsap.to(contentRef.current, {
+      x: x * 10,
+      y: y * -10,
+      duration: 0.3,
+      ease: 'power2.out',
+    })
+  }
+
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section
+      id="home"
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+    >
       {/* Three.js Background */}
       <div className="absolute inset-0 opacity-30">
         <Scene />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto will-change-transform">
         <h1
           ref={titleRef}
           className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent"
