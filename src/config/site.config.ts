@@ -4,7 +4,7 @@ export const siteConfig = {
   description: 'Professional profile, experience, and projects',
   url: 'https://yourwebsite.com',
   email: 'Dukeschnepf@gmail.com',
-  location: 'Sequim/Fall City, Washington',
+  location: 'Seattle',
   available: true,
 
   navigation: [

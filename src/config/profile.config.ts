@@ -1,7 +1,7 @@
 export const profile = {
   name: 'Duke Schnepf',
   title: 'Entrepreneurial Tech Professional & Community Builder',
-  location: 'Sequim/Fall City, Washington',
+  location: 'Seattle',
   phone: '(425) 647-7993',
   email: 'Dukeschnepf@gmail.com',
   linkedin: 'https://www.linkedin.com/in/duke-schnepf-48a13b133/',
