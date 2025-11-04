@@ -1,8 +1,7 @@
 import { useRef, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Float, Text3D, Center, useTexture } from '@react-three/drei'
+import { Float } from '@react-three/drei'
 import * as THREE from 'three'
-import { cameraConfig, materialPresets } from '../../../config/three.config'
 
 export function AboutScene() {
   return (
@@ -57,7 +56,7 @@ function GamingController({ position }: { position: [number, number, number] }) 
   const groupRef = useRef<THREE.Group>(null!)
   const { mouse } = useThree()
   
-  useFrame((state) => {
+  useFrame(() => {
     if (!groupRef.current) return
     
     // Mouse interaction - follow cursor

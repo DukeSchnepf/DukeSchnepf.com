@@ -4,7 +4,7 @@
  * Provides utilities for scene lifecycle, state management, and performance monitoring
  */
 
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import {
@@ -115,7 +115,7 @@ export function useThreeScene(options: UseThreeSceneOptions): UseThreeSceneRetur
  * Hook for managing scene-specific interactions
  */
 export function useSceneInteraction() {
-  const { camera, raycaster, mouse, gl } = useThree()
+  const { mouse, gl } = useThree()
   const [hoveredObject, setHoveredObject] = useState<THREE.Object3D | null>(null)
   const [selectedObject, setSelectedObject] = useState<THREE.Object3D | null>(null)
 
@@ -216,10 +216,6 @@ export function useLazyModel(modelPath: string) {
   useEffect(() => {
     setIsLoading(true)
     setError(null)
-
-    // TODO: Implement actual GLTF loading
-    // For now, we'll create a placeholder
-    const loader = new THREE.ObjectLoader()
     
     // Simulate loading delay
     const timeoutId = setTimeout(() => {

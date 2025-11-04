@@ -9,7 +9,7 @@
  * - Form field interactions
  */
 
-import anime, { type AnimeParams } from 'animejs'
+import anime from 'animejs'
 import { animationDuration, animationEasing } from '@/config/animations.config'
 
 const durations = animationDuration; const easings = animationEasing.anime

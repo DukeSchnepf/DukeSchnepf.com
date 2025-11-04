@@ -9,7 +9,7 @@
  * - Wave animations
  */
 
-import anime, { type AnimeParams } from 'animejs'
+import anime from 'animejs'
 import animationsConfig from '@/config/animations.config'
 
 const { durations, easings } = animationsConfig.anime

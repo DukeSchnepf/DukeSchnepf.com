@@ -1,8 +1,8 @@
 import { useRef, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Text, Float, MeshDistortMaterial } from '@react-three/drei'
+import { Float, MeshDistortMaterial } from '@react-three/drei'
 import * as THREE from 'three'
-import { cameraConfig, particleConfig, animationConfig } from '../../../config/three.config'
+import { particleConfig, animationConfig } from '../../../config/three.config'
 
 export function HeroScene() {
   return (
@@ -97,9 +97,7 @@ function InteractiveParticles() {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -149,45 +147,6 @@ function CentralGeometry() {
   )
 }
 
-/**
- * Orbiting geometries around the center
- */
-function OrbitingGeometry({
-  radius,
-  speed,
-  color,
-  offset = 0,
-}: {
-  radius: number
-  speed: number
-  color: string
-  offset?: number
-}) {
-  const meshRef = useRef<THREE.Mesh>(null!)
-  
-  useFrame((state) => {
-    if (!meshRef.current) return
-    
-    const time = state.clock.elapsedTime * speed + offset
-    meshRef.current.position.x = Math.cos(time) * radius
-    meshRef.current.position.z = Math.sin(time) * radius
-    meshRef.current.rotation.x = time
-    meshRef.current.rotation.y = time * 0.5
-  })
-  
-  return (
-    <mesh ref={meshRef}>
-      <octahedronGeometry args={[0.3, 0]} />
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.3}
-        metalness={0.7}
-        roughness={0.3}
-      />
-    </mesh>
-  )
-}
 
 /**
  * Accent lights for dramatic effect

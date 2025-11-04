@@ -11,7 +11,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import anime, { type AnimeInstance, type AnimeParams } from 'animejs'
-import { countNumber } from '@/features/animations/anime/effects'
 
 /**
  * useAnime - Basic animation hook

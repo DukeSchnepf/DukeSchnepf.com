@@ -1,9 +1,7 @@
-import { useRef, useMemo } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
-import { RoundedBox, Text, Float } from '@react-three/drei'
-import { useScroll } from '@react-three/drei'
+import { useRef, useMemo, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { RoundedBox, Text } from '@react-three/drei'
 import * as THREE from 'three'
-import { cameraConfig } from '../../../config/three.config'
 
 interface ProjectCardProps {
   position: [number, number, number]
@@ -13,8 +11,6 @@ interface ProjectCardProps {
 }
 
 export function ProjectsScene() {
-  const scroll = useScroll()
-  
   // Project card data (placeholder)
   const projects = useMemo(() => [
     { title: 'Project 1', color: '#0ea5e9', position: [-3, 2, 0] as [number, number, number] },
@@ -54,19 +50,9 @@ export function ProjectsScene() {
 function ProjectCard({ position, index, title, color }: ProjectCardProps) {
   const meshRef = useRef<THREE.Group>(null!)
   const [hovered, setHovered] = useState(false)
-  const scroll = useScroll()
   
   useFrame((state) => {
     if (!meshRef.current) return
-    
-    // Scroll-based reveal animation
-    const scrollProgress = scroll?.offset || 0
-    const targetY = position[1] + Math.sin(scrollProgress * Math.PI * 2 + index) * 0.5
-    meshRef.current.position.y = THREE.MathUtils.lerp(
-      meshRef.current.position.y,
-      targetY,
-      0.1
-    )
     
     // Hover effect
     const targetScale = hovered ? 1.1 : 1
@@ -173,6 +159,4 @@ function BackgroundGrid() {
   )
 }
 
-// Import useState at the top
-import { useState } from 'react'
 

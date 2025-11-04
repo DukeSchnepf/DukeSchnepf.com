@@ -396,7 +396,6 @@ export const initializeAnimations = () => {
   // Configure GSAP for performance
   gsap.config({
     force3D: performanceConfig.force3D,
-    autoKill: performanceConfig.autoKill,
     nullTargetWarn: false,
   })
   
@@ -468,5 +467,14 @@ export default {
   pageTransition: pageTransitionConfig,
   initialize: initializeAnimations,
   utils: animationUtils,
+  // Helper properties for anime and gsap
+  anime: {
+    durations: animationDuration,
+    easings: animationEasing.anime,
+  },
+  gsap: {
+    durations: animationDuration,
+    easings: animationEasing.gsap,
+  },
 }
 

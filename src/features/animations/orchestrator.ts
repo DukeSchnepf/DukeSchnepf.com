@@ -1,6 +1,8 @@
-import { gsap, type GSAPTimeline } from 'gsap'
+import { gsap } from 'gsap'
 import type anime from 'animejs'
 import animationsConfig from '@/config/animations.config'
+
+type Timeline = gsap.core.Timeline
 
 type PriorityLevel = keyof typeof animationsConfig.orchestration.priority
 
@@ -21,10 +23,10 @@ function generateId(prefix: string) {
 export class AnimationOrchestrator {
   private queue: OrchestratedItem[] = []
   private active: OrchestratedItem[] = []
-  private maxConcurrent = animationsConfig.orchestration.maxConcurrentAnimations
+  private maxConcurrent: number = animationsConfig.orchestration.maxConcurrentAnimations
   private reducedMotion = animationsConfig.performance.reducedMotion
 
-  registerGsapTimeline(tl: GSAPTimeline, priority: PriorityLevel = 'normal') {
+  registerGsapTimeline(tl: Timeline, priority: PriorityLevel = 'normal') {
     const id = generateId('gsap')
     const item: OrchestratedItem = {
       id,
@@ -58,7 +60,10 @@ export class AnimationOrchestrator {
 
     // Reduced motion: slow down and disable looped eye-candy
     if (this.reducedMotion) {
-      instance.speed = 0.5
+      // Use playbackRate if available, otherwise adjust duration
+      if ('playbackRate' in instance && typeof instance.playbackRate === 'number') {
+        instance.playbackRate = 0.5
+      }
     }
 
     return this.enqueue(item)
@@ -115,16 +120,12 @@ export class AnimationOrchestrator {
       const gap = animationsConfig.orchestration.sequenceGap
       gsap.delayedCall(gap, () => {
         next.play()
-        // Cleanup when finished (best-effort)
-        if (next.type === 'gsap') {
-          const tl = gsap.globalTimeline.getChildren().find(t => (t as GSAPTimeline).labels && true)
-          // No reliable lookup; rely on manual kill when components unmount
-        }
+        // No reliable lookup; rely on manual kill when components unmount
       })
     }
 
     // Cull finished/paused timelines periodically
-    this.active = this.active.filter(item => {
+    this.active = this.active.filter(() => {
       // We cannot reliably introspect Anime/GSAP completion across versions
       // Leave active until explicitly killed or replaced; consumers should call kill
       return true

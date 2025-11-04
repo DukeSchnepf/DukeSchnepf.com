@@ -159,7 +159,7 @@ function Controller({
 function Button({
   position,
   color,
-  label,
+  label: _label,
 }: {
   position: [number, number, number]
   color: string
