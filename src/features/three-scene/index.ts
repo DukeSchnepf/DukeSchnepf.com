@@ -1,3 +1,10 @@
 export * from './Scene'
 export * from './Background'
+export * from './scenes/HeroScene'
+export * from './scenes/ProjectsScene'
+export * from './scenes/AboutScene'
+export * from './objects/GamingSet'
+export * from './objects/FitnessGym'
+export * from './objects/ScienceLab'
+export * from './utils/sceneManager'
 

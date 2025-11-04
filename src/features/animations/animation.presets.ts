@@ -1,5 +1,10 @@
 import { gsap } from 'gsap'
 
+/**
+ * Legacy animation presets - kept for backward compatibility
+ * For more advanced animations, use the new GSAP utilities from @/features/animations/gsap
+ */
+
 export const animationPresets = {
   fadeIn: (targets: string | Element, options = {}) => {
     return gsap.from(targets, {
@@ -58,4 +63,7 @@ export const scrollAnimations = {
     })
   },
 }
+
+// Re-export new GSAP utilities for convenience
+export * from './gsap'
 
