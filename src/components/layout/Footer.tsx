@@ -1,5 +1,5 @@
 import { siteConfig } from '@/config/site.config'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/common/Button'
 
 export function Footer() {
   const scrollToTop = () => {
@@ -54,7 +54,7 @@ export function Footer() {
 
         {/* Back to Top Button */}
         <div className="flex justify-center">
-          <Button onClick={scrollToTop} variant="ghost" size="sm">
+          <Button onClick={scrollToTop} variant="outline">
             Back to Top ↑
           </Button>
         </div>

@@ -1,5 +1,5 @@
-import { SEO } from '@/components/SEO'
-import { Card } from '@/components/ui/Card'
+import { SEO } from '@/components/layout/SEO'
+import { Card } from '@/components/common/Card'
 import { experience } from '@/config/experience.config'
 import { profile } from '@/config/profile.config'
 

@@ -8,52 +8,48 @@ export interface ExperienceItem {
 
 export const experience: ExperienceItem[] = [
   {
-    role: 'Founder & CEO',
+    role: 'Co-Founder',
+    company: 'Duke Pro Max',
+    start: 'Jan 2021',
+    end: 'Present',
+    bullets: ['Co-founded and operate a business venture in Seattle, WA.'],
+  },
+  {
+    role: 'Founder',
     company: 'Northwest Motor Club',
     start: 'Aug 2018',
     end: 'Present',
     bullets: [
-      'Grew the community to 3,500+ followers and connected tens of thousands of enthusiasts',
-      'Organized 50+ car meets and multiple large-scale events with prizes, sponsors, and live entertainment',
-      'Led sponsor procurement, marketing, operations, and on-site logistics',
+      'Established Northwest Motor Club from inception, uniting the Washington car community.',
+      'Grew community to over 3,500 followers and connected tens of thousands of enthusiasts.',
+      'Organized 50+ car meets and significant events with prizes, sponsorships, and live entertainment.',
+      'Managed large & small event planning, coordination, and on-the-spot problem solving.',
+      'Oversaw event marketing, sponsor procurement, and team management.',
     ],
   },
   {
     role: 'Game Operations Manager',
-    company: 'Thought Ops LLC',
+    company: 'Thought Ops',
     start: 'Nov 2020',
     end: 'Present',
     bullets: [
-      'Managed operations, fundraising, and charity collaborations',
-      'Launched and maintained social media presence across platforms',
-      'Oversaw production features and launches for Rescue Bear Operation on mobile and consoles',
+      'Oversee all aspects of game operations and fundraising initiatives.',
+      'Collaborate with reputable charities and manage volunteer recruitment.',
+      'Launch and maintain weekly social media presence.',
+      'Manage and launch RBO on Apple App Store, Google Play, and consoles.',
+      'Supervise production of touch capability and address emerging challenges.',
     ],
   },
   {
-    role: "Owner & Operator",
+    role: 'Small Business Owner',
     company: "Duke's Helping Hands",
-    start: 'Jan 2012',
+    start: 'Jun 2015',
     end: 'Present',
     bullets: [
-      'Provided IT support, technical advising and repairs; earned numerous 5-star reviews',
-      'Handled varied services including minor electrical, yard maintenance, and carpet cleaning',
-      'Built a business primarily through word-of-mouth referrals',
+      'Honed stellar management and interpersonal skills through self-employment.',
+      'Garnered numerous 5-star reviews and completed hundreds of jobs.',
+      'Provided IT support, technical advising, and computer repairs.',
+      'Handled small electrical repairs, creative problem solving, yardwork, and carpet cleaning.',
     ],
   },
-  {
-    role: 'Carpenter',
-    company: 'P & M Construction',
-    start: 'Aug 2019',
-    end: 'Jan 2020',
-    bullets: ['Framing, siding, foundation work, and project coordination'],
-  },
-  {
-    role: 'Front-End Representative',
-    company: 'HyVee',
-    start: 'Sep 2016',
-    end: 'Jan 2017',
-    bullets: ['Customer service, end cap management, and cash handling'],
-  },
 ]
-
-

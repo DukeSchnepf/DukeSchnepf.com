@@ -40,18 +40,6 @@ export const themeConfig = {
     lg: '1024px',
     xl: '1280px',
   },
-
-  animation: {
-    duration: {
-      fast: '0.2s',
-      normal: '0.3s',
-      slow: '0.6s',
-    },
-    easing: {
-      default: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-    },
-  },
 }
 
 export type ThemeConfig = typeof themeConfig

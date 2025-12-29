@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { highlights } from '@/config/highlights.config'
-import { Card } from '@/components/ui/Card'
+import { Card } from '@/components/common/Card'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 

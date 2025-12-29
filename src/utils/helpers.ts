@@ -1,9 +1,3 @@
-import { clsx, type ClassValue } from 'clsx'
-
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs)
-}
-
 function getHeaderOffsetPx(): number {
   const nav = document.querySelector('nav') as HTMLElement | null
   return nav?.getBoundingClientRect().height ?? 0

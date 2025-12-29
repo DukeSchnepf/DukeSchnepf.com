@@ -1,4 +1,4 @@
-import { SEO } from '@/components/SEO'
+import { SEO } from '@/components/layout/SEO'
 import { profile } from '@/config/profile.config'
 
 export function ResumePage() {

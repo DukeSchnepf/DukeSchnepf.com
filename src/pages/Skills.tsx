@@ -1,6 +1,6 @@
-import { SEO } from '@/components/SEO'
-import { Card } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
+import { SEO } from '@/components/layout/SEO'
+import { Card } from '@/components/common/Card'
+import { Badge } from '@/components/common/Badge'
 import { skills } from '@/config/skills.config'
 import { profile } from '@/config/profile.config'
 

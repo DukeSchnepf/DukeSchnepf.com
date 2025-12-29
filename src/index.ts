@@ -5,6 +5,6 @@ export * from './hooks/useGSAP'
 
 export * from './utils/constants'
 export * from './utils/helpers'
+export * from './utils/cn'
 
-export * from './features/animations/gsap.config'
-export * from './features/animations/animation.presets'
+export * from './config/gsap.config'

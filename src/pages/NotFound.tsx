@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/common/Button'
+import { Card } from '@/components/common/Card'
 import { useNavigate } from 'react-router-dom'
 
 export function NotFound() {
@@ -13,7 +13,7 @@ export function NotFound() {
         <p className="text-gray-400 mb-8">
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <Button onClick={() => navigate('/')} variant="primary" size="lg">
+        <Button onClick={() => navigate('/')} variant="primary">
           Go Home
         </Button>
       </Card>

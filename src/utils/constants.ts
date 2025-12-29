@@ -1,9 +1,3 @@
-export const ANIMATION_DURATION = {
-  FAST: 0.2,
-  NORMAL: 0.3,
-  SLOW: 0.6,
-}
-
 export const BREAKPOINTS = {
   SM: 640,
   MD: 768,

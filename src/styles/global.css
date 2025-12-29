@@ -1,72 +1,516 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+    scroll-behavior: smooth;
+  }
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0a0a0a;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #0a0a0a, #1a1a1a);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  body {
+    background-color: theme('colors.space-void');
+    color: theme('colors.white');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 }
 
-/* Custom scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background-color: theme('colors.space-void');
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 5px;
+  background-color: theme('colors.space-accent');
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background-color: theme('colors.neon-blue');
 }
 
-/* Focus styles */
-*:focus-visible {
-  outline: 2px solid #0ea5e9;
-  outline-offset: 2px;
+@layer utilities {
+  .metallic {
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+  }
+
+  .text-metallic {
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .shadow-neon {
+    box-shadow: 0 0 10px theme('colors.neon-blue'), 0 0 20px theme('colors.neon-blue');
+  }
+
+  .animate-scroll {
+    animation: scroll 2s infinite;
+  }
+
+  .animate-animStar {
+    animation-name: animStar;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .animate-shooting-star-path {
+    animation: shooting-star-path 4s linear infinite;
+    offset-rotate: auto;
+  }
+
+  .animate-float-cloud {
+    animation: float-cloud 8s ease-in-out infinite;
+  }
+
+  .animate-nebula-flow {
+    animation: nebula-flow 8s ease infinite;
+    background-size: 200% 200%;
+  }
+
+  .animate-orbital-spin {
+    animation: orbital-spin 4s linear infinite;
+  }
 }
 
-/* Selection */
-::selection {
-  background-color: #0ea5e9;
-  color: #fff;
+/*===KEYFRAMES===*/
+@keyframes scroll {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(15px);
+    opacity: 0;
+  }
 }
 
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+@keyframes shooting-star-path {
+  0% {
+    offset-distance: 0%;
+    opacity: 1;
+  }
+
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes float-cloud {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: rotate(315deg) translateX(0);
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(315deg) translateX(-1500px);
+    opacity: 0;
+  }
+}
+
+@keyframes move-background {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes draw-loop {
+  0% {
+    stroke-dashoffset: 120;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  40% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  60% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -120;
+    opacity: 0;
+  }
+}
+
+@keyframes follow-variable-speed {
+  0% {
+    offset-distance: 0%;
+    animation-timing-function: ease-in;
+  }
+
+  25% {
+    offset-distance: 25%;
+    animation-timing-function: ease-in-out;
+  }
+
+  50% {
+    offset-distance: 50%;
+    animation-timing-function: ease-in;
+  }
+
+  75% {
+    offset-distance: 75%;
+    animation-timing-function: ease-in-out;
+  }
+
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-fast {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes nebula-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes orbital-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*===ANIMATION CLASSES===*/
+.clouds {
+  width: 100%;
+  height: 100%;
+  background: transparent url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/clouds_repeat.png") repeat;
+  background-size: 1000px 1000px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0.3;
+  animation: move-background 150s linear infinite;
+}
+
+.animate-draw-loop {
+  animation: draw-loop 4s linear infinite;
+}
+
+.drawing-dot {
+  fill: white;
+  filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px #22d3ee) drop-shadow(0 0 10px #c084fc);
+  animation: follow-variable-speed 4s linear infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1.5s ease-in-out infinite;
+}
+
+/*===UFO STYLES===*/
+.ufo-wrapper {
+  position: relative;
+  pointer-events: none;
+  animation: ufo-depth-switcher 12s linear infinite;
+  animation-delay: 0s;
+}
+
+.ufo-axis-x {
+  width: 100%;
+  height: 100%;
+  animation: osc-x 6s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+
+.ufo-axis-y {
+  width: 100%;
+  height: 100%;
+  animation: osc-y 6s ease-in-out infinite alternate;
+  animation-delay: 0s;
+}
+
+.ufo-axis-scale {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: osc-scale 6s ease-in-out infinite alternate;
+  animation-delay: 0s;
+}
+
+.ufo-ship {
+  position: relative;
+  width: 60px;
+  height: 18px;
+  background: #222;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 -3px 8px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(34, 211, 238, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  animation: ufo-tilt 6s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+
+.ufo-ship::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 15px;
+  width: 30px;
+  height: 14px;
+  background: rgba(200, 255, 255, 0.9);
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 0 15px rgba(200, 255, 255, 0.8);
+}
+
+.ufo-ship::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 44px;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #ff0000 0, #ff0000 4px, transparent 4px, transparent 10px);
+  box-shadow: 0 0 8px #ff0000;
+  animation: ufo-blink 0.8s ease-in-out infinite;
+}
+
+/*===UFO KEYFRAMES===*/
+@keyframes osc-x {
+  0% {
+    transform: translateX(-150px);
+  }
+
+  100% {
+    transform: translateX(150px);
+  }
+}
+
+@keyframes osc-y {
+  0% {
+    transform: translateY(-30px);
+  }
+
+  100% {
+    transform: translateY(30px);
+  }
+}
+
+@keyframes osc-scale {
+  0% {
+    transform: scale(0.8);
+  }
+
+  100% {
+    transform: scale(1.4);
+  }
+}
+
+@keyframes ufo-tilt {
+  0% {
+    transform: rotate(-10deg);
+  }
+
+  100% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes ufo-depth-switcher {
+  0% {
+    z-index: 1;
+  }
+
+  25% {
+    z-index: 1;
+  }
+
+  25.1% {
+    z-index: 50;
+  }
+
+  75% {
+    z-index: 50;
+  }
+
+  75.1% {
+    z-index: 1;
+  }
+
+  100% {
+    z-index: 1;
+  }
+}
+
+@keyframes ufo-blink {
+  0% {
+    opacity: 1;
+    filter: brightness(1.5);
+  }
+
+  50% {
+    opacity: 0.3;
+    filter: brightness(1);
+  }
+
+  100% {
+    opacity: 1;
+    filter: brightness(1.5);
+  }
+}
+
+/*===FLAG WAVE ANIMATION===*/
+@keyframes flag-wave {
+  0% {
+    transform: skewY(-6deg) scaleX(1);
+  }
+
+  25% {
+    transform: skewY(-3deg) scaleX(0.95);
+  }
+
+  50% {
+    transform: skewY(-8deg) scaleX(1.02);
+  }
+
+  75% {
+    transform: skewY(-4deg) scaleX(0.98);
+  }
+
+  100% {
+    transform: skewY(-6deg) scaleX(1);
+  }
+}
+
+.animate-flag-wave {
+  animation: flag-wave 2s ease-in-out infinite;
+  transform-origin: left center;
+}
+
+@keyframes float-sway {
+  0% {
+    transform: translateX(-50%) rotate(15deg) translateY(0px);
+  }
+
+  25% {
+    transform: translateX(-50%) rotate(15deg) translateY(-3px) translateX(2px);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(15deg) translateY(-5px);
+  }
+
+  75% {
+    transform: translateX(-50%) rotate(15deg) translateY(-3px) translateX(-2px);
+  }
+
+  100% {
+    transform: translateX(-50%) rotate(15deg) translateY(0px);
+  }
+}
+
+.animate-float-sway {
+  animation: float-sway 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 4s ease-in-out infinite;
+}

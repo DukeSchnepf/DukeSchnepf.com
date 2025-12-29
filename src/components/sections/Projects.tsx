@@ -1,168 +1,255 @@
-import { useState, useEffect, useRef } from 'react'
-import { Card } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
-import { Modal } from '@/components/ui/Modal'
-import { projects, type Project, type ProjectCategory } from '@/config/projects.config'
-import gsap from 'gsap'
+import { useState, useRef, useCallback } from 'react';
+import { TiltCard } from '@/components/common/TiltCard';
+import { ExternalLink, Github, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
+import gsap from 'gsap';
 
-export function Projects() {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-  const [filter, setFilter] = useState<ProjectCategory>('all')
-  const [filteredProjects, setFilteredProjects] = useState(projects)
-  const sectionRef = useRef<HTMLElement>(null)
+function Projects({ id }: { id?: string }) {
+  const containerRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLHeadingElement>(null);
+  const pastCarouselRef = useRef<HTMLDivElement>(null);
+  const currentCarouselRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (filter === 'all') {
-      setFilteredProjects(projects)
-    } else {
-      setFilteredProjects(projects.filter((p) => p.category === filter))
+  const [pastIndex, setPastIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPastAnimating, setIsPastAnimating] = useState(false);
+  const [isCurrentAnimating, setIsCurrentAnimating] = useState(false);
+
+  const pastProjects = [
+    {
+      title: "Past Project 1",
+      desc: "A placeholder for a past project description. This was a stepping stone.",
+      tags: ["Legacy Tech", "Prototype"],
+      github: "#",
+      demo: "#",
+      color: "from-neon-blue to-neon-cyan"
+    },
+    {
+      title: "Past Project 2",
+      desc: "Another past project that taught me valuable lessons.",
+      tags: ["Old Framework", "Experiment"],
+      github: "#",
+      demo: "#",
+      color: "from-blue-500 to-teal-400"
     }
-  }, [filter])
+  ];
 
-  useEffect(() => {
-    if (sectionRef.current) {
-      gsap.fromTo(
-        sectionRef.current.querySelectorAll('.project-card'),
-        {
-          opacity: 0,
-          y: 50,
-          scale: 0.95,
-        },
-        {
+  const currentProjects = [
+    {
+      title: "Current Project 1",
+      desc: "A placeholder for a current project description. Cutting edge stuff.",
+      tags: ["Modern Tech", "In Progress"],
+      github: "#",
+      demo: "#",
+      color: "from-neon-purple to-neon-pink"
+    },
+    {
+      title: "Current Project 2",
+      desc: "Another current project pushing the boundaries of what's possible.",
+      tags: ["Next Gen", "AI Integration"],
+      github: "#",
+      demo: "#",
+      color: "from-purple-600 to-pink-500"
+    }
+  ];
+
+  // Header animation
+  useScrollReveal(headerRef, undefined, {
+    animation: 'slideUp',
+    once: true,
+  });
+
+  // Carousel transition animation
+  const animateCarousel = useCallback((
+    ref: React.RefObject<HTMLDivElement | null>,
+    direction: number,
+    onMidpoint: () => void,
+    onComplete: () => void
+  ) => {
+    const el = ref.current;
+    if (!el) {
+      onMidpoint();
+      onComplete();
+      return;
+    }
+
+    // Exit animation
+    gsap.to(el, {
+      opacity: 0,
+      x: -20 * direction,
+      duration: 0.15,
+      ease: 'power2.in',
+      onComplete: () => {
+        onMidpoint();
+
+        // Set initial position for enter
+        gsap.set(el, { x: 20 * direction, opacity: 0 });
+
+        // Enter animation
+        gsap.to(el, {
           opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          stagger: 0.1,
+          x: 0,
+          duration: 0.15,
           ease: 'power2.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          },
-        }
-      )
-    }
-  }, [filteredProjects])
+          onComplete,
+        });
+      },
+    });
+  }, []);
 
-  const categories: ProjectCategory[] = ['all', 'web', 'mobile', 'desktop', 'other']
+  const nextPast = useCallback(() => {
+    if (isPastAnimating) return;
+    setIsPastAnimating(true);
+    animateCarousel(
+      pastCarouselRef,
+      1,
+      () => setPastIndex((prev) => (prev + 1) % pastProjects.length),
+      () => setIsPastAnimating(false)
+    );
+  }, [isPastAnimating, animateCarousel, pastProjects.length]);
 
-  return (
-    <>
-      <section id="projects" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">My Projects</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              A selection of projects I've worked on
+  const prevPast = useCallback(() => {
+    if (isPastAnimating) return;
+    setIsPastAnimating(true);
+    animateCarousel(
+      pastCarouselRef,
+      -1,
+      () => setPastIndex((prev) => (prev - 1 + pastProjects.length) % pastProjects.length),
+      () => setIsPastAnimating(false)
+    );
+  }, [isPastAnimating, animateCarousel, pastProjects.length]);
+
+  const nextCurrent = useCallback(() => {
+    if (isCurrentAnimating) return;
+    setIsCurrentAnimating(true);
+    animateCarousel(
+      currentCarouselRef,
+      1,
+      () => setCurrentIndex((prev) => (prev + 1) % currentProjects.length),
+      () => setIsCurrentAnimating(false)
+    );
+  }, [isCurrentAnimating, animateCarousel, currentProjects.length]);
+
+  const prevCurrent = useCallback(() => {
+    if (isCurrentAnimating) return;
+    setIsCurrentAnimating(true);
+    animateCarousel(
+      currentCarouselRef,
+      -1,
+      () => setCurrentIndex((prev) => (prev - 1 + currentProjects.length) % currentProjects.length),
+      () => setIsCurrentAnimating(false)
+    );
+  }, [isCurrentAnimating, animateCarousel, currentProjects.length]);
+
+  const ProjectCard = ({ project }: { project: typeof pastProjects[0] }) => (
+    <TiltCard className="h-full w-full">
+      <div className={`h-full p-1 rounded-2xl bg-gradient-to-br ${project.color} opacity-80 hover:opacity-100 transition-opacity`}>
+        <div className="h-full bg-space-light rounded-xl p-6 flex flex-col">
+          <div className="mb-4">
+            <h3 className="font-display text-2xl font-bold mb-2 text-white">
+              {project.title}
+            </h3>
+            <p className="text-text-secondary text-sm mb-4 leading-relaxed line-clamp-3">
+              {project.desc}
             </p>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {project.tags.map((tag, i) => (
+                <span key={i} className="text-xs font-mono px-2 py-1 rounded bg-space-accent text-neon-cyan border border-neon-cyan/20">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setFilter(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 capitalize ${
-                  filter === category
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-white/5 text-gray-400 hover:text-white'
-                }`}
-              >
-                {category === 'all' ? 'All' : category}
-              </button>
-            ))}
-          </div>
-
-          {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <Card
-                key={project.id}
-                glass
-                hover
-                className="project-card cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div
-                  className="w-full h-48 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg mb-4 flex items-center justify-center"
-                  style={{
-                    backgroundImage: `url(${project.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-                <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.slice(0, 3).map((tech) => (
-                    <Badge key={tech} variant="outline" className="text-xs">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </Card>
-            ))}
+          <div className="flex gap-4 mt-auto pt-4 border-t border-white/10">
+            <a href={project.github} className="flex items-center gap-2 text-sm font-bold text-white hover:text-neon-blue transition-colors">
+              <Github size={18} /> Code
+            </a>
+            <a href={project.demo} className="flex items-center gap-2 text-sm font-bold text-white hover:text-neon-purple transition-colors">
+              <ExternalLink size={18} /> Live Demo
+            </a>
           </div>
         </div>
-      </section>
+      </div>
+    </TiltCard>
+  );
 
-      {/* Project Modal */}
-      <Modal
-        isOpen={!!selectedProject}
-        onClose={() => setSelectedProject(null)}
-        title={selectedProject?.title}
-      >
-        {selectedProject && (
-          <div className="space-y-4">
-            <div
-              className="w-full h-64 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg"
-              style={{
-                backgroundImage: `url(${selectedProject.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
-            <p className="text-gray-300">{selectedProject.longDescription}</p>
+  return (
+    <section id={id} ref={containerRef} className="min-h-screen py-12 md:py-20 bg-space-void text-white relative overflow-hidden flex flex-col justify-center">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-neon-blue/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-            <div>
-              <h4 className="font-semibold mb-2">Technologies Used:</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedProject.technologies.map((tech) => (
-                  <Badge key={tech} variant="primary">
-                    {tech}
-                  </Badge>
-                ))}
+      <div className="container mx-auto px-4">
+        <h2
+          ref={headerRef}
+          className="font-display text-4xl md:text-5xl font-bold mb-16 text-center"
+        >
+          Past and <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">Current</span>
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto items-center">
+          {/* Past Projects Carousel */}
+          <div className="flex flex-col items-center gap-4">
+            <h3 className="text-2xl font-bold text-neon-blue mb-2">Past</h3>
+            <div className="flex items-center gap-4 w-full">
+              <button
+                onClick={prevPast}
+                disabled={isPastAnimating}
+                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <div className="flex-1 h-[400px]">
+                <div
+                  ref={pastCarouselRef}
+                  className="h-full"
+                >
+                  <ProjectCard project={pastProjects[pastIndex]} />
+                </div>
               </div>
-            </div>
-
-            <div className="flex gap-4 pt-4">
-              {selectedProject.liveUrl && (
-                <a
-                  href={selectedProject.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                  Live Demo
-                </a>
-              )}
-              {selectedProject.githubUrl && (
-                <a
-                  href={selectedProject.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors"
-                >
-                  View Code
-                </a>
-              )}
+              <button
+                onClick={nextPast}
+                disabled={isPastAnimating}
+                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
             </div>
           </div>
-        )}
-      </Modal>
-    </>
-  )
+
+          {/* Current Projects Carousel */}
+          <div className="flex flex-col items-center gap-4">
+            <h3 className="text-2xl font-bold text-neon-purple mb-2">Current</h3>
+            <div className="flex items-center gap-4 w-full">
+              <button
+                onClick={prevCurrent}
+                disabled={isCurrentAnimating}
+                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <div className="flex-1 h-[400px]">
+                <div
+                  ref={currentCarouselRef}
+                  className="h-full"
+                >
+                  <ProjectCard project={currentProjects[currentIndex]} />
+                </div>
+              </div>
+              <button
+                onClick={nextCurrent}
+                disabled={isCurrentAnimating}
+                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
+export default Projects;

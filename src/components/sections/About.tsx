@@ -1,105 +1,85 @@
-import { useEffect, useRef } from 'react'
-import { Card } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
- 
-import { profile } from '@/config/profile.config'
-import { skills as skillsConfig } from '@/config/skills.config'
-import { smoothScrollTo } from '@/utils/helpers'
-import gsap from 'gsap'
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const previewSkills = skillsConfig.technical.slice(0, 8)
+import { profile } from '@/config/profile.config';
 
-// Keep Home page About concise; full details live on /about
+gsap.registerPlugin(ScrollTrigger);
 
-export function About() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const { elementRef } = useIntersectionObserver({ threshold: 0.1 })
+function About({ id }: { id?: string }) {
+  const containerRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    if (sectionRef.current) {
-      gsap.fromTo(
-        sectionRef.current.children,
-        {
-          opacity: 0,
-          y: 50,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            end: 'bottom 20%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      )
-    }
-  }, [])
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleActions: 'play none none reverse'
+      }
+    });
+
+    tl.from('.about-text', {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2
+    });
+
+  }, { scope: containerRef });
 
   return (
-    <section id="about" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div ref={elementRef as unknown as React.RefObject<HTMLDivElement>} className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">About Duke</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">{profile.overview}</p>
-        </div>
+    <section id={id} ref={containerRef} className="h-screen py-20 bg-space-void text-white relative overflow-hidden flex flex-col justify-center">
+      {/* Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-neon-purple/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-neon-blue/10 rounded-full blur-3xl" />
+      </div>
 
-        {/* Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-12 mb-16">
-          {/* Bio */}
-          <Card glass>
-            <h3 className="text-2xl font-bold mb-4">Professional Overview</h3>
-            <p className="text-gray-300 mb-4">{profile.overview}</p>
-            <p className="text-gray-300">{profile.philosophy}</p>
-          </Card>
-
-          {/* Skills */}
-          <Card glass>
-            <h3 className="text-2xl font-bold mb-6">Key Skills</h3>
-            <div className="flex flex-wrap gap-3">
-              {previewSkills.map((skill) => (
-                <Badge key={skill} variant="primary">
-                  {skill}
-                </Badge>
-              ))}
+      <div className="container mx-auto px-4 relative z-10 max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="about-image relative group max-w-md mx-auto md:max-w-full">
+            <div className="absolute -inset-4 bg-gradient-to-r from-neon-blue to-neon-purple rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-space-light aspect-square">
+              <img
+                src={profile.headshot}
+                alt={profile.name}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="mt-6">
-              <button
-                onClick={() => smoothScrollTo('projects')}
-                className="text-primary-400 hover:text-primary-300 underline"
-              >
-                View projects
-              </button>
+          </div>
+
+          <div className="about-content space-y-6 lg:space-y-4">
+            <h2 className="font-display text-4xl md:text-5xl font-bold">
+              About <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">Me</span>
+            </h2>
+
+            <p className="about-text text-lg text-text-secondary leading-relaxed">
+              {profile.philosophy}
+            </p>
+
+            <p className="about-text text-lg text-text-secondary leading-relaxed">
+              {profile.overview}
+            </p>
+
+            <div className="pt-6 lg:pt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-space-light border border-white/5">
+                  <h4 className="text-3xl font-bold text-neon-cyan mb-1">3+</h4>
+                  <p className="text-sm text-text-muted">Years Experience</p>
+                </div>
+                <div className="p-4 rounded-xl bg-space-light border border-white/5">
+                  <h4 className="text-3xl font-bold text-neon-purple mb-1">20+</h4>
+                  <p className="text-sm text-text-muted">Projects Completed</p>
+                </div>
+              </div>
             </div>
-          </Card>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center">
-          <button
-            onClick={() => smoothScrollTo('projects')}
-            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all duration-200"
-          >
-            Explore Projects
-          </button>
-        </div>
-
-        <div className="text-center mt-12">
-          <button
-            onClick={() => smoothScrollTo('contact')}
-            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700 transition-all duration-200"
-          >
-            Get in Touch
-          </button>
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
+export default About;
